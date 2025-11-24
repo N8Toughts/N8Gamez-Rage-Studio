@@ -1,5 +1,6 @@
 # __init__.py
 # RAGE Studio Suite - Universal RAGE Engine Modding Toolkit
+
 bl_info = {
     "name": "RAGE Studio Suite",
     "author": "N8Gamez + RAGE Modding Community",
@@ -37,13 +38,12 @@ try:
     from . import codewalker_integration
     from . import asset_browser
     from . import utilities
-   
     # NEW: Import the complete RAGE binary systems
     from . import rage_binary_core
-    from . import rage_shader_system 
+    from . import rage_shader_system
     from . import rage_dll_manager
     from . import rage_game_integration
-  
+
     # Module reloading for development
     modules = (
         file_analyzer,
@@ -80,7 +80,7 @@ classes = ()
 def get_classes():
     """Dynamically get classes to avoid import issues"""
     class_list = []
-  
+   
     # Properties
     try:
         from .properties import (
@@ -99,7 +99,7 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import properties - {e}")
-  
+
     # UI Panels
     try:
         from .ui_panels import (
@@ -128,7 +128,7 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import UI panels - {e}")
-  
+
     # Core Operators
     try:
         from .operators import (
@@ -159,7 +159,7 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import core operators - {e}")
-  
+
     # Terrain Tools
     try:
         from .terrain_tools import (
@@ -178,7 +178,7 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import terrain tools - {e}")
-  
+
     # Road Tools
     try:
         from .road_tools import (
@@ -195,7 +195,7 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import road tools - {e}")
-  
+
     # CodeWalker Integration
     try:
         from .codewalker_integration import (
@@ -210,7 +210,7 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import CodeWalker integration - {e}")
-  
+
     # Asset Browser
     try:
         from .asset_browser import (
@@ -229,15 +229,15 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import asset browser - {e}")
-  
+
     # NEW: RAGE Binary Core Operators
     try:
         from .rage_binary_core import RAGE_OT_ExportBinarySelected
         class_list.extend([RAGE_OT_ExportBinarySelected])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import binary core - {e}")
-   
-    # NEW: Shader System Operators 
+
+    # NEW: Shader System Operators
     try:
         from .rage_shader_system import (
             RAGE_OT_CreateShaderDLL,
@@ -249,7 +249,7 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import shader system - {e}")
-   
+
     # NEW: DLL Manager Operators
     try:
         from .rage_dll_manager import (
@@ -264,7 +264,7 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import DLL manager - {e}")
-   
+
     # NEW: Game Integration Operators
     try:
         from .rage_game_integration import (
@@ -281,7 +281,17 @@ def get_classes():
         ])
     except ImportError as e:
         print(f"RAGE Studio Suite: Failed to import game integration - {e}")
-  
+
+    # NEW: Heightmap Import/Export Splitter - Direct registration
+    try:
+        from .heightmap_import_export_splitter import register_heightmap_tools
+        # This function will handle registration of its own classes
+        heightmap_classes = register_heightmap_tools()
+        class_list.extend(heightmap_classes)
+        print("✅ Heightmap Import/Export Splitter integrated")
+    except ImportError as e:
+        print(f"RAGE Studio Suite: Failed to import heightmap tools - {e}")
+
     return class_list
 
 @persistent
@@ -301,7 +311,7 @@ def register():
     print("👤 Developed by: N8Gamez + RAGE Modding Community")
     print("📁 Supported: RDR1, RDR2, GTA V with 100% Binary Export")
     print("=" * 60)
-  
+
     # Reload modules in development mode
     try:
         if (bpy.context.preferences.addons.get(__name__) and
@@ -310,11 +320,11 @@ def register():
             reload_modules()
     except Exception as e:
         print(f"Development mode check failed: {e}")
-  
+
     # Get classes dynamically
     global classes
     classes = get_classes()
-  
+
     # Register all classes
     registered_count = 0
     for cls in classes:
@@ -323,9 +333,9 @@ def register():
             registered_count += 1
         except Exception as e:
             print(f"❌ Failed to register {cls.__name__}: {e}")
-  
+
     print(f"✅ Registered {registered_count}/{len(classes)} classes")
-  
+
     # Register properties
     try:
         from .properties import RAGEStudioProperties
@@ -333,12 +343,12 @@ def register():
         print("✅ Registered scene properties")
     except Exception as e:
         print(f"❌ Failed to register properties: {e}")
-  
+
     # Initialize global bridge instance
     if not hasattr(bpy.types.Scene, 'rage_bridge'):
         bpy.types.Scene.rage_bridge = None
         print("✅ Initialized bridge instance")
-  
+
     # NEW: Initialize game streaming system
     if not hasattr(bpy.types.Scene, 'rage_game_streamer'):
         bpy.types.Scene.rage_game_streamer = None
@@ -346,34 +356,34 @@ def register():
 
     # NEW: Initialize DLL manager
     if not hasattr(bpy.types.Scene, 'rage_dll_manager'):
-        bpy.types.Scene.rage_dll_manager = None 
+        bpy.types.Scene.rage_dll_manager = None
         print("✅ Initialized DLL management system")
-  
+
     # Register load handler
     bpy.app.handlers.load_post.append(load_handler)
-  
+
     print(f"🎯 RAGE Studio Suite v2.1.0 successfully loaded!")
-    print("   ✅ 100% Binary Exporters Active")
-    print("   ✅ Real-time Game Streaming Ready")
-    print("   ✅ Multi-Shader DLL System Online")
-    print("   ✅ Safe DLL Management Active")
-    print("   Use the RAGE panel in 3D Viewport sidebar")
+    print(" ✅ 100% Binary Exporters Active")
+    print(" ✅ Real-time Game Streaming Ready")
+    print(" ✅ Multi-Shader DLL System Online")
+    print(" ✅ Safe DLL Management Active")
+    print(" Use the RAGE panel in 3D Viewport sidebar")
     print("=" * 60)
 
 def unregister():
     print("🔄 Unregistering RAGE Studio Suite v2.1.0...")
-  
+
     # Remove load handler
     if load_handler in bpy.app.handlers.load_post:
         bpy.app.handlers.load_post.remove(load_handler)
-  
+
     # Clean up bridge connection
     if hasattr(bpy.types.Scene, 'rage_bridge') and bpy.types.Scene.rage_bridge:
         try:
             bpy.types.Scene.rage_bridge.disconnect()
         except:
             pass
-  
+
     # NEW: Clean up game streaming
     if hasattr(bpy.types.Scene, 'rage_game_streamer') and bpy.types.Scene.rage_game_streamer:
         try:
@@ -387,7 +397,7 @@ def unregister():
             bpy.types.Scene.rage_dll_manager.cleanup()
         except:
             pass
-  
+
     # Unregister classes in reverse order
     unregistered_count = 0
     for cls in reversed(classes):
@@ -396,16 +406,16 @@ def unregister():
             unregistered_count += 1
         except Exception as e:
             print(f"❌ Failed to unregister {cls.__name__}: {e}")
-  
+
     print(f"✅ Unregistered {unregistered_count}/{len(classes)} classes")
-  
+
     # Clean up properties
     try:
         del bpy.types.Scene.rage_studio
         print("✅ Removed scene properties")
     except:
         pass
-  
+
     print("✅ RAGE Studio Suite v2.1.0 unregistered successfully")
 
 # Auto-register when running as script
